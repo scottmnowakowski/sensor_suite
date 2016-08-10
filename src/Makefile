@@ -63,4 +63,4 @@ clean:
 # Flash the STM32F4
 burn: proj
 	$(STLINK)/st-flash write $(PROJ_NAME).bin 0x8000000
-	arm-none-eabi-objdump -d -S $(PROJ_NAME).elf  > $(PROJ_NAME).dump
+	$(CC_PATH)/bin/arm-none-eabi-objdump -d -S $(PROJ_NAME).elf  > $(PROJ_NAME).dump
