@@ -20,7 +20,7 @@ PROJ_NAME=sensorsuite
 
 STM_COMMON=../STM32F4-Discovery_FW_V1.1.0
 
-CC_PATH=/usr/local/gcc-arm-none-eabi-5_4-2016q2
+CC_PATH=/usr/local/arm/
 CC=$(CC_PATH)/bin/arm-none-eabi-gcc
 OBJCOPY=$(CC_PATH)/bin/arm-none-eabi-objcopy
 
