@@ -17,22 +17,22 @@ void init_blue_push_button();
 uint32_t get_ticks();
 void EXTI4_IRQHandler(void);
 
-#define DEBOUNCE_TIME		((uint32_t)0x00000032)
+#define DEBOUNCE_TIME           ((uint32_t)0x00000032)
 
 int main(void)
 {
-  /*!< At this stage the microcontroller clock setting is already configured, 
+    /* At this stage the microcontroller clock setting is already configured, 
        this is done through SystemInit() function which is called from startup
        file (startup_stm32f4xx.s) before to branch to application main.
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f4xx.c file
-     */
+    */
 
     // Enable Usage Fault, Bus Fault, and MMU Fault, else it will default to HardFault handler
     //SCB->SHCSR |= 0x00070000; 
 
-	uint8_t buttonDown = 0;
-	uint32_t buttonTime = get_ticks();
+    uint8_t buttonDown = 0;
+    uint32_t buttonTime = get_ticks();
     RCC_ClocksTypeDef RCC_Clocks;
 
     RCC_GetClocksFreq(&RCC_Clocks);
@@ -46,45 +46,45 @@ int main(void)
 
     while(1) {
         if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)) {
-			if (!buttonDown && get_ticks()-buttonTime > DEBOUNCE_TIME) // Button must be let go for at least DEBOUNCE_TIME ms
-			{
-    			GPIO_SetBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |  GPIO_Pin_15);  // Turn on LEDs
-			}
-			buttonDown = 1;
-    	}
+            if (!buttonDown && get_ticks()-buttonTime > DEBOUNCE_TIME) // Button must be let go for at least DEBOUNCE_TIME ms
+            {
+                GPIO_SetBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |  GPIO_Pin_15);  // Turn on LEDs
+            }
+            buttonDown = 1;
+        }
         else if (buttonDown)
-		{
-    		GPIO_ResetBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |  GPIO_Pin_15);  // Turn off LEDs
-			buttonDown = 0;
-			buttonTime = get_ticks();
-		}
+        {
+            GPIO_ResetBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |  GPIO_Pin_15);  // Turn off LEDs
+            buttonDown = 0;
+            buttonTime = get_ticks();
+        }
     }
 }
 
 void init_LED()
 {
     GPIO_InitTypeDef gpio; // LEDS on GPIOD
-RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
 
     gpio.GPIO_Pin   = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |  GPIO_Pin_15;
-	gpio.GPIO_Mode  = GPIO_Mode_OUT;
-	gpio.GPIO_OType = GPIO_OType_PP;
-	gpio.GPIO_PuPd  = GPIO_PuPd_NOPULL; gpio.GPIO_Speed = GPIO_Speed_100MHz;
+    gpio.GPIO_Mode  = GPIO_Mode_OUT;
+    gpio.GPIO_OType = GPIO_OType_PP;
+    gpio.GPIO_PuPd  = GPIO_PuPd_NOPULL; gpio.GPIO_Speed = GPIO_Speed_100MHz;
 
-	GPIO_Init(GPIOD, &gpio);
+    GPIO_Init(GPIOD, &gpio);
 }
 
 void init_blue_push_button()
 {
     GPIO_InitTypeDef gpio; // push button on GPIOA
 
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 
-	gpio.GPIO_Pin   = GPIO_Pin_0; gpio.GPIO_Mode  = GPIO_Mode_IN; gpio.GPIO_OType = GPIO_OType_PP;
-	gpio.GPIO_PuPd  = GPIO_PuPd_DOWN;
-	gpio.GPIO_Speed = GPIO_Speed_100MHz;
+    gpio.GPIO_Pin   = GPIO_Pin_0; gpio.GPIO_Mode  = GPIO_Mode_IN; gpio.GPIO_OType = GPIO_OType_PP;
+    gpio.GPIO_PuPd  = GPIO_PuPd_DOWN;
+    gpio.GPIO_Speed = GPIO_Speed_100MHz;
 
-	GPIO_Init(GPIOA, &gpio);
+    GPIO_Init(GPIOA, &gpio);
 }
 
 void init_UART4()
