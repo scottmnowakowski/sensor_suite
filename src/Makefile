@@ -1,5 +1,4 @@
-# Path to stlink
-STLINK=../stlink
+# Assumes stlink is installed system-wide
 
 SRCS=main.c system_stm32f4xx.c newlib_stubs.c my_printf.c
 
@@ -62,5 +61,5 @@ clean:
 
 # Flash the STM32F4
 burn: proj
-	$(STLINK)/st-flash write $(PROJ_NAME).bin 0x8000000
+	st-flash write $(PROJ_NAME).bin 0x8000000
 	$(CC_PATH)/bin/arm-none-eabi-objdump -d -S $(PROJ_NAME).elf  > $(PROJ_NAME).dump

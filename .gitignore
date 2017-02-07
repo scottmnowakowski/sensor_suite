@@ -2,4 +2,3 @@
 *.dump
 *.elf
 *.hex
-stlink/
