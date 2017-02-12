@@ -1,10 +1,5 @@
 #include "stm32f4xx_conf.h"
-#include "stm32f4xx.h"
-#include "stm32f4_discovery.h"
 #include "my_printf.h"
-#include "limits.h"
-#include "stdio.h"
-#include "misc.h"
 
 __IO uint32_t g_timing_delay;
 __IO uint32_t g_ticks = 0; // increments every millisecond
@@ -15,7 +10,6 @@ void init_UART4();
 void init_LED();
 void init_blue_push_button();
 uint32_t get_ticks();
-void EXTI4_IRQHandler(void);
 
 #define DEBOUNCE_TIME           ((uint32_t)0x00000032)
 
@@ -28,21 +22,19 @@ int main(void)
        system_stm32f4xx.c file
     */
 
-    // Enable Usage Fault, Bus Fault, and MMU Fault, else it will default to HardFault handler
-    //SCB->SHCSR |= 0x00070000; 
-
     uint8_t buttonDown = 0;
     uint32_t buttonTime = get_ticks();
     RCC_ClocksTypeDef RCC_Clocks;
 
     RCC_GetClocksFreq(&RCC_Clocks);
-    SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000); // tick every 1 ms, used by delay_ms()
+    if (SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000)) // tick every 1 ms, used by delay_ms()
+    {
+        // TODO: Add error checking if SysTick_Config fails
+    }
 
     init_LED();
     init_blue_push_button();
     init_UART4();
-
-    my_printf("Begin ...\r\n");
 
     while(1) {
         if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)) {
@@ -52,7 +44,7 @@ int main(void)
             }
             buttonDown = 1;
         }
-        else if (buttonDown)
+        else if (buttonDown)  // Button just released
         {
             GPIO_ResetBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |  GPIO_Pin_15);  // Turn off LEDs
             buttonDown = 0;
@@ -80,7 +72,8 @@ void init_blue_push_button()
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 
-    gpio.GPIO_Pin   = GPIO_Pin_0; gpio.GPIO_Mode  = GPIO_Mode_IN; gpio.GPIO_OType = GPIO_OType_PP;
+    gpio.GPIO_Pin   = GPIO_Pin_0; gpio.GPIO_Mode  = GPIO_Mode_IN;
+    gpio.GPIO_OType = GPIO_OType_PP;
     gpio.GPIO_PuPd  = GPIO_PuPd_DOWN;
     gpio.GPIO_Speed = GPIO_Speed_100MHz;
 
@@ -155,13 +148,12 @@ uint32_t get_ticks()
   */
 void assert_failed(uint8_t* file, uint32_t line)
 { 
-  /* User can add his own implementation to report the file name and line number,
-     ex: my_printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    /*  User can add his own implementation to report the file name and line number,
+        ex: my_printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
-  /* Infinite loop */
-  while (1)
-  {
-  }
+    /* Infinite loop */
+    while (1)
+    {
+    }
 }
 #endif
-
