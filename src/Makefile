@@ -1,12 +1,9 @@
 # Assumes stlink is installed system-wide
 
-SRCS=main.c system_stm32f4xx.c newlib_stubs.c my_printf.c
+SRCS=main.c system_stm32f4xx.c stm32f4xx_it.c newlib_stubs.c my_printf.c
 
 # Library modules
-SRCS += stm32f4xx_gpio.c stm32f4xx_rcc.c stm32f4xx_usart.c stm32f4xx_dma.c stm32f4xx_sdio.c stm32f4xx_syscfg.c stm32f4xx_exti.c misc.c stm32f4xx_i2c.c stm32f4xx_spi.c
-
-# Discovery specific
-SRCS += $(STM_COMMON)/Utilities/STM32F4-Discovery/stm32f4_discovery.c
+SRCS += stm32f4xx_gpio.c stm32f4xx_rcc.c stm32f4xx_usart.c stm32f4xx_sdio.c stm32f4xx_syscfg.c stm32f4xx_exti.c misc.c
 
 SRCS += startup_stm32f4xx.s
 
@@ -30,7 +27,6 @@ CFLAGS += -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
 CFLAGS += -I. -I../inc
 
 # Include files from STM libraries
-CFLAGS += -I$(STM_COMMON)/Utilities/STM32F4-Discovery
 CFLAGS += -I$(STM_COMMON)/Libraries/CMSIS/ST/STM32F4xx/Include
 CFLAGS += -I$(STM_COMMON)/Libraries/CMSIS/Include
 CFLAGS += -I$(STM_COMMON)/Libraries/STM32F4xx_StdPeriph_Driver/inc
@@ -57,7 +53,6 @@ clean:
 	rm -f $(PROJ_NAME).bin
 	rm -f $(PROJ_NAME).dump
 	rm -f $(STM_COMMON)/Libraries/STM32F4xx_StdPeriph_Driver/src/*.o
-	rm -f $(STM_COMMON)/Utilities/STM32F4-Discovery/stm32f4_discovery.o
 
 # Flash the STM32F4
 burn: proj
