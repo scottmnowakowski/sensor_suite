@@ -45,7 +45,6 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
-#include "stm32f4_discovery_sdio_sd.h"
 #include "my_printf.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
