@@ -101,6 +101,6 @@
 #define Act_THS             ((uint8_t)0x3e)
 #define Act_DUR             ((uint8_t)0x3f)
 
-void init_LSM9DS0();
+void LSM9DS0_Init();
 
 #endif

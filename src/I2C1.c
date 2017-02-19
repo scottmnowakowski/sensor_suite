@@ -1,3 +1,4 @@
+#include "I2C1.h"
 #include "stm32f4xx.h"
 
 void I2C1_Init()
