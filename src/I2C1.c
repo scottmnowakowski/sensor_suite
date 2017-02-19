@@ -31,10 +31,42 @@ void I2C1_Init()
 
 void I2C1_ReadReg(uint8_t addr, uint8_t reg, uint8_t size, uint8_t *buf)
 {
+    uint8_t bytenum;
+    I2C_AcknowledgeConfig(I2C1, ENABLE);
+    I2C_GenerateSTART(I2C1, ENABLE);
+    I2C_GenerateSTART(I2C1, DISABLE);
 
+    I2C_Send7bitAddress(I2C1, addr, I2C_Direction_Transmitter);
+
+    I2C_SendData(I2C1, reg | 0x80); // Set msb to enable auto-increment
+
+    I2C_GenerateSTART(I2C1, ENABLE);
+    I2C_GenerateSTART(I2C1, DISABLE);
+
+    I2C_Send7bitAddress(I2C1, addr, I2C_Direction_Receiver);
+
+    for (bytenum = 0; bytenum < size; bytenum++)
+    {
+        buf[bytenum] = I2C_ReceiveData(I2C1);
+    }
+    I2C_GenerateSTOP(I2C1, ENABLE);
+    return;
 }
 
 void I2C1_WriteReg(uint8_t addr, uint8_t reg, uint8_t size, uint8_t *buf)
 {
+    uint8_t bytenum;
+    I2C_AcknowledgeConfig(I2C1, ENABLE);
+    I2C_GenerateSTART(I2C1, ENABLE);
+    I2C_GenerateSTART(I2C1, DISABLE);
 
+    I2C_Send7bitAddress(I2C1, addr, I2C_Direction_Transmitter);
+
+    I2C_SendData(I2C1, reg | 0x80); // Set msb to enable auto-increment
+
+    for (bytenum = 0; bytenum < size; bytenum++)
+    {
+        I2C_SendData(I2C1, buf[bytenum]);
+    }
+    I2C_GenerateSTOP(I2C1, ENABLE);
 }
