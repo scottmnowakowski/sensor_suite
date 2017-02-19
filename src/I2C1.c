@@ -34,19 +34,58 @@ void I2C1_ReadReg(uint8_t addr, uint8_t reg, uint8_t size, uint8_t *buf)
     uint8_t bytenum;
     I2C_AcknowledgeConfig(I2C1, ENABLE);
     I2C_GenerateSTART(I2C1, ENABLE);
+    ErrorStatus status = ERROR;
+    while (status == ERROR)
+    {
+        status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT);
+    }
     I2C_GenerateSTART(I2C1, DISABLE);
 
     I2C_Send7bitAddress(I2C1, addr, I2C_Direction_Transmitter);
+    status = ERROR;
+    while (status == ERROR)
+    {
+        status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED);
+    }
 
     I2C_SendData(I2C1, reg | 0x80); // Set msb to enable auto-increment
+    status = ERROR;
+    while (status == ERROR)
+    {
+        status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED);
+    }
 
     I2C_GenerateSTART(I2C1, ENABLE);
+    status = ERROR;
+    while (status == ERROR)
+    {
+        status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT);
+    }
     I2C_GenerateSTART(I2C1, DISABLE);
 
+    if (size == 1)
+    {
+        // There is a buffer of 2 bytes, so if size == 1 we need to disable ack now
+        I2C_AcknowledgeConfig(I2C1, DISABLE);
+    }
     I2C_Send7bitAddress(I2C1, addr, I2C_Direction_Receiver);
+    status = ERROR;
+    while (status == ERROR)
+    {
+        status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED);
+    }
 
     for (bytenum = 0; bytenum < size; bytenum++)
     {
+        if (bytenum == size-1)
+        {
+            I2C_AcknowledgeConfig(I2C1, DISABLE);
+        }
+        status = ERROR;
+        while (status == ERROR)
+        {
+            status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED);
+        }
         buf[bytenum] = I2C_ReceiveData(I2C1);
     }
     I2C_GenerateSTOP(I2C1, ENABLE);
@@ -58,15 +97,35 @@ void I2C1_WriteReg(uint8_t addr, uint8_t reg, uint8_t size, uint8_t *buf)
     uint8_t bytenum;
     I2C_AcknowledgeConfig(I2C1, ENABLE);
     I2C_GenerateSTART(I2C1, ENABLE);
+    ErrorStatus status = ERROR;
+    while (status == ERROR)
+    {
+        status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT);
+    }
     I2C_GenerateSTART(I2C1, DISABLE);
 
     I2C_Send7bitAddress(I2C1, addr, I2C_Direction_Transmitter);
+    status = ERROR;
+    while (status == ERROR)
+    {
+        status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED);
+    }
 
     I2C_SendData(I2C1, reg | 0x80); // Set msb to enable auto-increment
+    status = ERROR;
+    while (status == ERROR)
+    {
+        status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTING);
+    }
 
     for (bytenum = 0; bytenum < size; bytenum++)
     {
         I2C_SendData(I2C1, buf[bytenum]);
+        status = ERROR;
+        while (status == ERROR)
+        {
+            status = I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTING);
+        }
     }
     I2C_GenerateSTOP(I2C1, ENABLE);
 }
