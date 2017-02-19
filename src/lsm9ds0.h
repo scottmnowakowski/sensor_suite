@@ -1,6 +1,17 @@
 #ifndef LSM9DS0_H
 #define LSM9DS0_H
 
+// Data scaling constants
+#define MAX_ACC             ((float)2)      // +- 2 g
+#define MAX_MAG             ((float)2)      // +- 2 gauss
+#define MAX_ROT             ((float)245)    // +- 245 dps
+
+// Register config
+#define CTRL_REG1_G_CFG     ((uint8_t)0x0F)     // DR = 00, BW = 00, PD = 1, Zen = 1, Yen = 1, Xen = 1
+#define CTRL_REG1_XM_CFG    ((uint8_t)0x97)     // AODR = 1001 (800Hz), BDU = 0, AZEN = 1, AYEN = 1, AXEN = 1
+#define CTRL_REG5_XM_CFG    ((uint8_t)0x10)     // TEMP_EN = 0, M_RES = 00, M_ODR = 100 (50Hz), LIR2 = 0, LIR1 = 0
+#define CTRL_REG7_XM_CFG    ((uint8_t)0x04)     // AHPM = 00, AFDS = 0, MLP = 1, MD = 00
+
 // I2C Addresses
 #define I2C_ADDR_G          ((uint8_t)0xD7)
 #define I2C_ADDR_XM         ((uint8_t)0x3B)
