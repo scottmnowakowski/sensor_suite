@@ -1,6 +1,11 @@
 #ifndef LSM9DS0_H
 #define LSM9DS0_H
 
+#include <stdint.h>
+
+// Scaling macro
+#define scale(value, max)   ((float)value*(max/(float)SHRT_MAX))
+
 // Data scaling constants
 #define MAX_ACC             ((float)2)      // +- 2 g
 #define MAX_MAG             ((float)2)      // +- 2 gauss
@@ -101,6 +106,34 @@
 #define Act_THS             ((uint8_t)0x3e)
 #define Act_DUR             ((uint8_t)0x3f)
 
+typedef struct
+{
+    int16_t X_Acc;
+    int16_t Y_Acc;
+    int16_t Z_Acc;
+    int16_t X_Rot;
+    int16_t Y_Rot;
+    int16_t Z_Rot;
+    int16_t X_Mag;
+    int16_t Y_Mag;
+    int16_t Z_Mag;
+}Raw_IMU_Data;
+
+typedef struct
+{
+    float X_Acc;
+    float Y_Acc;
+    float Z_Acc;
+    float X_Rot;
+    float Y_Rot;
+    float Z_Rot;
+    float X_Mag;
+    float Y_Mag;
+    float Z_Mag;
+}IMU_Data;
+
 void LSM9DS0_Init();
+void LSM9DS0_Read(Raw_IMU_Data *rawdata);
+void LSM9DS0_Scale(Raw_IMU_Data *rawdata, IMU_Data *data);
 
 #endif
